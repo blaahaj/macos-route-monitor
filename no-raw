@@ -1,0 +1,6 @@
+#!/bin/bash
+
+exec jq --unbuffered '
+  include "./process";
+  deep_no_raw
+'

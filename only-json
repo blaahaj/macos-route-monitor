@@ -1,0 +1,8 @@
+#!/usr/bin/ruby
+
+$stdout.sync = true
+
+$stdin.each_line do |t|
+  t.sub!(/^@\S+ /, '')
+  print t if t.start_with?('{')
+end

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+exec jq --unbuffered -r '
+
+  def tostring: if type == "string" then . else tojson end;
+
+  def summarise_sockaddr(columns):
+    .cells
+    | . as $cells
+    | [
+      keys[]
+       | . as $index
+      | columns[$index] + "=" + $cells[$index]
+    ] | join(", ")
+    ;
+
+  def summarise_sockaddrs:
+   .columns as $c
+   | (.rows[] | summarise_sockaddr($c));
+
+  def summarise_sections:
+   .sections[]
+   | if .type == "sockaddrs" then summarise_sockaddrs else empty end;
+
+ def summarise_event:
+  (.preamble.datetime_text + " " + .header.verb + " " + (summarise_sections | tostring));
+
+  def no_get:
+  if .verb == "RTM_GET" then empty else . end;
+
+  no_get | summarise_event
+'
+
+__END__
+
+ + " " + (
+    [.sections[] | (
+      c
+    )] | join("; ")
+  )
+
+(if (.type == "sockaddrs") then (
+  c
+)
+#  .columns as $columns
+#  | [
+#    .rows[] |
+#      (
+#      .cells as $cells
+#      | .cells[] | keys | [$columns[.], $cells[.]]
+#      )
+#  ] | tojson
+
+#  [ .rows[].cells ] | tojson
+#  [
+#    .rows | . as $row | keys
+#  ] | tojson
+
+) else empty end)

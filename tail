@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ "$1" == "--all" ] ; then
+  cat log/main/@*.s
+  shift
+fi
+
+exec tail "$@" log/main/current

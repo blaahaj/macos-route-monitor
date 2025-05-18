@@ -1,0 +1,15 @@
+#!/bin/bash
+
+#if [ -t 0 ] ; then
+#  exec < <( exec ./tail "$@" )
+#fi
+#
+#exec < <( exec ./only-json )
+#exec < <( exec ./make-raw )
+#exec ruby ./macos_route_event.rb
+
+if [ -t 0 ] ; then
+        ./tail "$@" | ./reparse
+else
+        ./only-json | ./make-raw | /usr/bin/ruby ./macos_route_event.rb
+fi

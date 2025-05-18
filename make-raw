@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec jq --unbuffered -c '{ _raw: ._raw, time: .time }'
